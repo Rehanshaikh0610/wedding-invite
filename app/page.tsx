@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Heart, MapPin, Calendar, Clock, ChevronDown, Volume2, VolumeX, CheckCircle } from 'lucide-react';
+import { Heart, MapPin, Calendar, Clock, ChevronDown, CheckCircle } from 'lucide-react';
 
 type ScratchCardProps = {
   children: React.ReactNode;
@@ -107,8 +107,6 @@ const ScratchCard: React.FC<ScratchCardProps> = ({ children }) => {
 export default function Home() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-  const [isMusicPlaying, setIsMusicPlaying] = useState(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   // Form State
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -158,17 +156,6 @@ export default function Home() {
     }
   };
 
-  const toggleMusic = () => {
-    if (!audioRef.current) return;
-
-    if (isMusicPlaying) {
-      audioRef.current.pause();
-    } else {
-      audioRef.current.play().catch(error => console.log("Audio play failed:", error));
-    }
-    setIsMusicPlaying(!isMusicPlaying);
-  };
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -201,19 +188,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#F4EBE1] text-[#222222] font-sans antialiased overflow-x-hidden">
-
-      <audio
-        ref={audioRef}
-        loop
-        src="https://cdn.pixabay.com/download/audio/2022/10/25/audio_2c91dcfe85.mp3?filename=beautiful-piano-122718.mp3"
-      />
-
-      <button
-        onClick={toggleMusic}
-        className="fixed bottom-6 right-6 z-50 bg-white/90 p-3 md:p-4 rounded-full shadow-[0_5px_15px_rgba(0,0,0,0.15)] border border-[#C8B8A6] text-[#8B7355] hover:bg-[#8B7355] hover:text-white transition-all duration-300 flex items-center gap-2 group"
-      >
-        {isMusicPlaying ? <Volume2 size={24} /> : <VolumeX size={24} />}
-      </button>
 
       <style dangerouslySetInnerHTML={{
         __html: `
