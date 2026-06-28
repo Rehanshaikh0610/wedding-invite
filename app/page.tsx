@@ -12,6 +12,8 @@ const ScratchCard: React.FC<ScratchCardProps> = ({ children }) => {
   const [isRevealed, setIsRevealed] = useState(false);
   const [isDrawing, setIsDrawing] = useState(false);
 
+  const lastRevealCheck = useRef(0);
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -28,12 +30,14 @@ const ScratchCard: React.FC<ScratchCardProps> = ({ children }) => {
       canvas.width = width * dpr;
       canvas.height = height * dpr;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.lineJoin = 'round';
+      ctx.lineCap = 'round';
 
       ctx.globalCompositeOperation = 'source-over';
-      ctx.fillStyle = '#B8A38E';
+      ctx.fillStyle = '#C4B79A';
       ctx.fillRect(0, 0, width, height);
 
-      ctx.font = '500 16px Montserrat, sans-serif';
+      ctx.font = '600 16px Montserrat, sans-serif';
       ctx.fillStyle = '#2C3E2D';
       ctx.textAlign = 'center';
       ctx.fillText('Scratch to reveal', width / 2, height / 2 + 5);
@@ -41,11 +45,33 @@ const ScratchCard: React.FC<ScratchCardProps> = ({ children }) => {
 
     draw();
 
-    const resizeObserver = new ResizeObserver(draw);
+    const resizeObserver = new ResizeObserver(() => draw());
     resizeObserver.observe(canvas);
 
     return () => resizeObserver.disconnect();
   }, []);
+
+  const checkReveal = () => {
+    if (isRevealed) return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const image = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    let transparent = 0;
+    const sampleStep = 32;
+    let sampleCount = 0;
+
+    for (let i = 3; i < image.data.length; i += sampleStep) {
+      sampleCount += 1;
+      if (image.data[i] === 0) transparent += 1;
+    }
+
+    if (sampleCount > 0 && transparent / sampleCount > 0.45) {
+      setIsRevealed(true);
+    }
+  };
 
   const scratchAt = (clientX: number, clientY: number) => {
     if (isRevealed) return;
@@ -57,15 +83,24 @@ const ScratchCard: React.FC<ScratchCardProps> = ({ children }) => {
 
     const x = clientX - rect.left;
     const y = clientY - rect.top;
+    const radius = Math.max(24, canvas.clientWidth / 12);
 
     ctx.globalCompositeOperation = 'destination-out';
     ctx.beginPath();
-    ctx.arc(x, y, 38, 0, Math.PI * 2);
+    ctx.arc(x, y, radius, 0, Math.PI * 2);
     ctx.fill();
+    ctx.closePath();
+
+    const now = performance.now();
+    if (now - lastRevealCheck.current > 250) {
+      lastRevealCheck.current = now;
+      checkReveal();
+    }
   };
 
   const handlePointerDown = (e: React.PointerEvent<HTMLCanvasElement>) => {
     e.preventDefault();
+    e.currentTarget.setPointerCapture(e.pointerId);
     setIsDrawing(true);
     scratchAt(e.clientX, e.clientY);
   };
