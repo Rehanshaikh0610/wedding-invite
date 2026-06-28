@@ -344,7 +344,7 @@ export default function Home() {
               </p>
               <h2 className="font-script text-4xl md:text-5xl text-[#8B7355] mb-2 md:mb-4">With</h2>
               <p className="font-serif italic text-2xl sm:text-3xl md:text-4xl text-[#2C3E2D] leading-tight px-4">
-                Aamir K P the son of Mr Muhammed Mussammil T C A and Mrs Saliha K P.
+                Aamir Muzzammil the son of Mr Muhammed Mussammil T C A and Mrs Saliha K P.
               </p>
             </div>
             <div className="w-24 h-[1px] bg-gradient-to-r from-transparent via-[#8B7355] to-transparent mx-auto my-8 md:my-10"></div>
@@ -372,7 +372,7 @@ export default function Home() {
             <>
               <div className="text-center mb-8 md:mb-12">
                 <h2 className="font-script text-4xl md:text-6xl text-[#8B7355] mb-2 md:mb-4">Be our Guest</h2>
-                <h3 className="font-serif text-2xl md:text-3xl text-[#2C3E2D] font-medium">Kindly RSVP by June 05th</h3>
+                <h3 className="font-serif text-2xl md:text-3xl text-[#2C3E2D] font-medium">Kindly RSVP by July 10th</h3>
               </div>
 
               <form className="space-y-6 md:space-y-8 font-sans" onSubmit={handleSubmit}>
